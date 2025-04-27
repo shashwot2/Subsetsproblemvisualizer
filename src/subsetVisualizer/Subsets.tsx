@@ -206,7 +206,7 @@ const SubsetVisualizer = () => {
       <div className="flex flex-col space-y-4">
         <h2 className="text-xl font-bold">Subset Generation Visualization</h2>
         
-        <h3 className="text-xl font-bold">This is a visualization for LeetCode #78. Can also serve as visualization for some Backtracking recursion problems!</h3>
+        <h3 className="text-xl font-bold">This is a visualization for LeetCode #78 but with defined length. Can also serve as visualization for some Backtracking recursion problems!</h3>
         <div className="flex flex-col space-y-2">
           <label className="font-medium">Input Array (comma-separated):</label>
           <input 
@@ -286,21 +286,6 @@ const SubsetVisualizer = () => {
       
       <div className="flex flex-col space-y-4">
         <h3 className="text-lg font-medium">Arrays History:</h3>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="p-4 border rounded">
-            <h4 className="font-medium mb-2">Current Array History:</h4>
-            <div className="p-2 rounded">
-              {currentState.currentArray && currentState.currentArray.map((item, idx) => (
-                <div key={idx} className="mb-1">
-                  Step {idx + 1}: [{item}]
-                </div>
-              ))}
-              {(!currentState.currentArray || currentState.currentArray.length === 0) && 
-                <div>No history yet</div>
-              }
-            </div>
-          </div>
-          
           <div className="p-4 border rounded">
             <h4 className="font-medium mb-2">Result Array </h4>
             <div className="p-2 rounded">
@@ -314,7 +299,6 @@ const SubsetVisualizer = () => {
               }
             </div>
           </div>
-        </div>
       </div>
       
       <div className="flex flex-col space-y-4">
