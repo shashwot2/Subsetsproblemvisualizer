@@ -7,7 +7,9 @@ const SubsetVisualizer = () => {
   const [currentState, setCurrentState] = useState({
     path: [],
     index: 0,
-    activeSubset: []
+    activeSubset: [],
+    resultArray: [],
+    currentArrayHistory: []
   });
   const [speed, setSpeed] = useState(1000);
   const [isRunning, setIsRunning] = useState(false);
@@ -15,6 +17,7 @@ const SubsetVisualizer = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [treeData, setTreeData] = useState(null);
 
+  // Generate all possible subsets
   const generateSubsets = (arr, length) => {
     const result = [];
     const allSteps = [];
@@ -23,12 +26,15 @@ const SubsetVisualizer = () => {
     const dfs = (i, currentArray, path = [], depth = 0, parentId = null) => {
       const nodeId = `node-${treeNodes.length}`;
       
+      // Clone current state for visualization
       const stepState = {
         index: i,
         currentArray: [...currentArray],
         result: [...result],
         path: [...path, nodeId],
-        depth: depth
+        depth: depth,
+        resultArray: [...result], // Track result array at each step
+        currentArrayHistory: [...currentArray] // Track current array at each step
       };
       
       treeNodes.push({
@@ -61,7 +67,6 @@ const SubsetVisualizer = () => {
         return;
       }
       
-      // Recursive cases
       for (let j = i; j < arr.length; j++) {
         currentArray.push(arr[j]);
         dfs(j + 1, currentArray, [...path, nodeId], depth + 1, nodeId);
@@ -129,11 +134,14 @@ const SubsetVisualizer = () => {
       setCurrentState({
         path: step.path,
         index: step.index,
-        activeSubset: step.currentArray
+        activeSubset: step.currentArray,
+        resultArray: step.resultArray || [],
+        currentArrayHistory: step.currentArrayHistory|| []
       });
     }
   };
 
+  // Step backward manually
   const stepBackward = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
@@ -142,11 +150,14 @@ const SubsetVisualizer = () => {
       setCurrentState({
         path: step.path,
         index: step.index,
-        activeSubset: step.currentArray
+        activeSubset: step.currentArray,
+        resultArray: step.resultArray || [],
+        currentArrayHistory: step.currentArrayHistory || []
       });
     }
   };
 
+  // Effect for auto-stepping through visualization
   useEffect(() => {
     let timer;
     if (isRunning && currentStep < steps.length - 1) {
@@ -160,10 +171,12 @@ const SubsetVisualizer = () => {
     return () => clearTimeout(timer);
   }, [isRunning, currentStep, steps.length, speed]);
 
+  // Initialize the visualization
   useEffect(() => {
     restart();
   }, [array, subsetLength]);
 
+  // Render a tree node recursively
   const renderTreeNode = (node) => {
     if (!node) return null;
     
@@ -193,6 +206,7 @@ const SubsetVisualizer = () => {
       <div className="flex flex-col space-y-4">
         <h2 className="text-xl font-bold">Subset Generation Visualization</h2>
         
+        <h3 className="text-xl font-bold">This is a visualization for LeetCode #78. Can also serve as visualization for some Backtracking recursion problems!</h3>
         <div className="flex flex-col space-y-2">
           <label className="font-medium">Input Array (comma-separated):</label>
           <input 
@@ -267,6 +281,39 @@ const SubsetVisualizer = () => {
           <p><strong>Step:</strong> {currentStep + 1} / {steps.length}</p>
           <p><strong>Index:</strong> {currentState.index}</p>
           <p><strong>Current Subset:</strong> [{currentState.activeSubset.join(', ')}]</p>
+        </div>
+      </div>
+      
+      <div className="flex flex-col space-y-4">
+        <h3 className="text-lg font-medium">Arrays History:</h3>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="p-4 border rounded">
+            <h4 className="font-medium mb-2">Current Array History:</h4>
+            <div className="p-2 rounded">
+              {currentState.currentArray && currentState.currentArray.map((item, idx) => (
+                <div key={idx} className="mb-1">
+                  Step {idx + 1}: [{item}]
+                </div>
+              ))}
+              {(!currentState.currentArray || currentState.currentArray.length === 0) && 
+                <div>No history yet</div>
+              }
+            </div>
+          </div>
+          
+          <div className="p-4 border rounded">
+            <h4 className="font-medium mb-2">Result Array </h4>
+            <div className="p-2 rounded">
+              {currentState.resultArray && currentState.resultArray.map((subset, idx) => (
+                <div key={idx} className="mb-1">
+                  Result {idx + 1}: [{subset.join(', ')}]
+                </div>
+              ))}
+              {(!currentState.resultArray || currentState.resultArray.length === 0) && 
+                <div>No results yet</div>
+              }
+            </div>
+          </div>
         </div>
       </div>
       
